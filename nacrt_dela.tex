@@ -25,10 +25,12 @@ v nadaljevanju. V vseh bomo predpostavile, da imamo usmerjen graf
 $G = (V, E)$, kjer je $V$ množica vseh vozlišč in $E$ množica vseh usmerjenih povezav. 
 \begin{definicija}
     Naj bodo $1 \leq a_1 < a_2 \ldots < a_k \leq n-1$ generatorji.
-    Usmerjeni cirkularni graf $C_n(a_1, \ldots, a_{k})$ ima vozlišča
+    Usmerjeni cirkulantni graf $C_n(a_1, \ldots, a_{k})$ ima vozlišča
     $v_0, v_1, \ldots, v_{n-1}$ in usmerjene povezave $v_iv_{i+a_j}$ za  
     $0 \leq i \leq n-1$ in $1 \leq j \leq k$, pri čemer indekse računamo
-    po modulu n.
+    po modulu n. V našem projektu bomo obravnavale usmerjene cirkulantne grafe 
+    $C_n(1,2,\ldots,n-d)$, kjer je $n$ število vozlišč, $n-d$ število generatorjev
+    in $d$ število manjkajočih generatorjev.
 \end{definicija}
 
 \begin{definicija}
