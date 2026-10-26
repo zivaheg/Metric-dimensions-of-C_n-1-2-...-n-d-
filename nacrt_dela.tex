@@ -1,0 +1,67 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[slovene]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+\usepackage{fancyhdr}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\theoremstyle{definition}
+\newtheorem{definicija}{Definicija}
+
+\title{Metric dimension of $C_n(1, 2, \dots, n - d)$: exact values}
+\author{Živa Hegler, Neža Zupančič, Sara Polajnar}
+
+\begin{document}
+\maketitle
+
+\section{Načrt reševanja problema}
+
+\subsection{Naloga 1: Implementacija ILP modela in verifikacija}
+Za natančen izračun $\operatorname{dim}(C_n(1, \dots, n-d))$ bomo implementirale celoštevilski linearni program. Za 
+osnovo bomo vzele ILP model, ki sta ga v svoji projektni nalogi uporabili že Jasmina Mazej in Lana Stojčić (avtorica 
+kode za omenjen ILP je Maša Popovič) ter ga prilagodile našemu problemu.
+Ker je $n > 2d$, so možne usmerjene razdalje le $0, 1$ ali $2$, pri čemer je 
+$d(v_i, v_j) = 1$, če $(j - i) \bmod n \in \{1, \dots, n-d\}$, in $2$ sicer. 
+
+Problem formuliramo kot problem pokritja: z binarnimi spremenljivkami $x_w \in \{0, 1\}$ za vsako vozlišče $w$ 
+minimiziramo $\sum x_w$, pri pogojih $\sum_{w \in D_{u,v}} x_w \geq 1$ za vse pare $u < v$, kjer je 
+$D_{u,v} = \{w \mid d(w, u) \neq d(w, v)\}$. Pravilnost programa bomo preverile z znanima formulama za 
+$d = 4$ ($\lceil 2n/5 \rceil$) in $d = 5$, v kodo pa bomo vgradile tudi samodejno preverjanje unikatnosti dobljenih 
+vektorjev razdalj.
+
+\subsection{Naloga 2: Računanje za večje grafe in pospešitev reševalnika}
+Z modelom bomo izvedle eksperimente za parametre $4 \leq d \leq 15$ in $n > 2d$. Za $5 \leq d \leq 10$ bomo vrednosti 
+izračunale vsaj do $n = 100$, za ostale pa čim dlje prek $n = 40$. 
+
+Zaradi upočasnitve reševalnika pri večjih $n$ bomo rotacijsko simetrijo odpravile s fiksiranjem začetnega vozlišča 
+($x_0 = 1$). Če obstaja kakšna optimalna razrešujoča množica, jo lahko namreč z rotacijo vedno preslikamo tako, da 
+vsebuje vozlišče $v_0$. Rezultate z vsemi metrikami in časi izvajanja bomo sproti shranjevale v datoteke CSV.
+
+\subsection{Naloga 3: Testiranje Domneve 1}
+Na zbranih podatkih bomo preverile Domnevo 1, ki postavlja spodnjo mejo:
+\[
+\operatorname{dim}(C_n(1, \dots, n-d)) \geq B(n, d) = 
+\begin{cases}
+\left\lceil \frac{n}{d+1} \right\rceil \left\lceil \frac{d+1}{3} \right\rceil, & d \not\equiv 0 \pmod 3, \\
+\frac{n}{2d-1} \cdot \frac{2d}{3}, & d \equiv 0 \pmod 3,
+\end{cases}
+\]
+zaokroženo navzgor na celo število. Sistematično bomo preverile:
+\begin{itemize}
+    \setlength\itemsep{0em}
+    \item ali spodnja meja velja za vse testirane primere (iskanje morebitnih protiprimerov),
+    \item pogoja enakosti: $(d+1) \mid n$ za $d \not\equiv 0 \pmod 3$ ter $(2d-1) \mid n$ za $d \equiv 0 \pmod 3$,
+    \item razlike $\operatorname{dim} - \lceil B(n, d) \rceil$ v primerih, ko enakost ne velja.
+\end{itemize}
+
+\subsection{Naloga 4: Iskanje eksaktnih formul za $d \geq 6$}
+Za fiksne $d \geq 6$ bomo poskusile izpeljati zaprte formule glede na ostanke 
+$n \bmod (d+1)$ (pri $d \not\equiv 0 \pmod 3$) oziroma $n \bmod (2d-1)$ (pri $d \equiv 0 \pmod 3$). 
+Za vsak ostanek bomo poiskale obliko $\operatorname{dim} = a \cdot q + c_r$. Določile bomo tudi prag $N_d$, pri katerem 
+se vzorec ustali, in popisale vsa začetna odstopanja za $n < N_d$.
+
+\end{document}

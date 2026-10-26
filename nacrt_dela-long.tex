@@ -1,0 +1,165 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[slovene]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amsfonts}
+%\usepackage{enumitem}
+%\usepackage{mathabx}
+\usepackage{fancyhdr}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{amsthm}
+\usepackage{amssymb}
+
+\theoremstyle{definition}
+\newtheorem{definicija}{Definicija}
+
+\title{Metric dimension of $Cn(1, 2, . . . , n - d)$: exact values}
+\author{Živa Hegler, Neža Zupančič, Sara Polajnar}
+
+\begin{document}
+\maketitle
+
+\section{Načrt dela}
+\subsection{Naloga 1: Implementacija ILP modela in testiranje na znanih vrednostih}
+
+V prvem koraku bomo implementirale program za natančen izračun metrične dimenzije
+$\operatorname{dim}(C_n(1, \dots, n-d))$ in iskanje pripadajoče optimalne razrešujoče množice $W$. 
+Za osnovo bomo vzele ILP model, ki sta ga v svoji projektni nalogi uporabili že Jasmina Mazej in Lana Stojčić (avtorica 
+kode za omenjen ILP je Maša Popovič), ter ga ustrezno prilagodile specifikam našega problema.
+
+Ker se omejujemo na območje $n > 2d$, opazimo, da ima graf naslednjo lastnost: razdalja med poljubnima različnima 
+vozliščema $v_i$ in $v_j$ je vedno bodisi 1 bodisi 2:
+\[
+d(v_i, v_j) = 
+\begin{cases}
+0, & \text{če } i = j, \\
+1, & \text{če } (j - i) \bmod n \in \{1, 2, \dots, n-d\}, \\
+2, & \text{sicer},
+\end{cases}
+\]
+kjer z $(j - i) \bmod n \in \{0, 1, \dots, n-d\}$ označujemo najmanjši nenegativni ostanek pri deljenju z $n$, kar 
+geometrijsko ustreza številu korakov od $v_i$ do $v_j$ v smeri urinega kazalca.
+
+Problem formuliramo kot problem pokritja (angl.~\emph{Hitting Set}):
+\begin{itemize}
+    \item Za vsako vozlišče $w \in V$ uvedemo binarno spremenljivko $x_w \in \{0, 1\}$, kjer $x_w = 1$ pomeni, da je $w \in W$.
+    \item Za vsak neurejen par različnih vozlišč $\{u, v\}$ določimo množico vozlišč, ki ta par ločijo:
+    \[
+    D_{u,v} = \{w \in V \mid d(w, u) \neq d(w, v)\}.
+    \]
+    \item Zahtevamo, da je vsak par $\{u, v\}$ ločen z vsaj enim izbranim vozliščem:
+    \[
+    \sum_{w \in D_{u,v}} x_w \geq 1 \quad \text{za vse } u < v.
+    \]
+    \item Ciljna funkcija minimizira velikost razrešujoče množice: $\min \sum_{w \in V} x_w$.
+\end{itemize}
+
+\paragraph{Preverjanje pravilnosti implementacije:}
+Pravilnost programa bomo sistematično preverile s primerjavo izračunanih rezultatov z že dokazanimi formulami iz 
+literature:
+
+\begin{itemize}
+    \item Za $d = 4$ in $n \geq 10$:
+    \[
+    \operatorname{dim}(C_n(1, \dots, n-4)) = \left\lceil \frac{2n}{5} \right\rceil.
+    \]
+    \item Za $d = 5$ in $n \geq 11$:
+    \[
+    \operatorname{dim}(C_n(1, \dots, n-5)) = 
+    \begin{cases}
+    \lfloor n/3 \rfloor, & \text{če } 3 \mid n, \\
+    \lfloor n/3 \rfloor + 2, & \text{če } 3 \nmid n.
+    \end{cases}
+    \]
+\end{itemize}
+
+\subsection{Naloga 2: Računanje metrične dimenzije za večje grafe in optimizacija reševalnika}
+
+Ko bo program preverjen na manjših primerih, bomo izvedle sistematične računske eksperimente za parametre v območju:
+\[
+4 \leq d \leq 15 \quad \text{in} \quad n > 2d.
+\]
+Cilj je izračunati točne vrednosti metrične dimenzije čim dlje prek meje $n = 40$, pri čemer bomo za parametre 
+$5 \leq d \leq 10$ rezultate izračunale vsaj do $n = 100$.
+
+\paragraph{Obvladovanje časovne zahtevnosti:}
+Navodila opozarjajo, da privzeti reševalnik v SageMath pri nekaterih parametrih postane opazno počasnejši. Za reševanje 
+tega problema bomo uporabile naslednji pristop:
+\begin{itemize}
+    \item \textbf{Fiksiranje začetnega vozlišča:} Cirkulantni grafi so invariantni za ciklične zamike vozlišč. 
+    Če obstaja kakšna optimalna razrešujoča množica, jo lahko z rotacijo vedno preslikamo tako, da vsebuje vozlišče 
+    $v_0$.
+\end{itemize}
+
+\paragraph{Zbiranje podatkov:}
+Vse dobljene rezultate bomo sproti shranjevale v tabelarični obliki (datoteke CSV). Za vsak par $(n, d)$ bomo zabeležile:
+\begin{itemize}
+    \item izračunano metrično dimenzijo $\operatorname{dim}(C_n(1, \dots, n-d))$,
+    \item najdeno optimalno razrešujočo množico $W$,
+    \item čas izvajanja računanja (za analizo časovne zahtevnosti).
+\end{itemize}
+
+\subsection{Naloga 3: Testiranje Domneve 1 in pogojev za enakost}
+
+Tretja faza projekta je namenjena empiričnemu preverjanju \textbf{Domneve 1}, ki sta jo v navodilih zastavila profesorja. 
+Domneva podaja teoretično spodnjo mejo za metrično dimenzijo in napoveduje pogoje, kdaj je ta meja dosežena z enakostjo.
+
+Za $d \geq 4$ in $n > 2d$ je predlagana spodnja meja definirana kot:
+\[
+\operatorname{dim}(C_n(1, \dots, n-d)) \geq B(n, d) = 
+\begin{cases}
+\left\lceil \frac{n}{d+1} \right\rceil \left\lceil \frac{d+1}{3} \right\rceil, & \text{če } d \not\equiv 0 \pmod 3, \\[1.5ex]
+\frac{n}{2d-1} \cdot \frac{2d}{3}, & \text{če } d \equiv 0 \pmod 3.
+\end{cases}
+\]
+Ker je metrična dimenzija celo število, se v primeru $d \equiv 0 \pmod 3$ desna stran zaokroži navzgor na celo število $\lceil B(n, d) \rceil$.
+
+V sklopu te naloge bomo na vseh izračunanih podatkih  preverile:
+\begin{itemize}
+    \item \textbf{Veljavnost spodnje meje:} Preverile bomo, ali za vse pare $(n, d)$ v našem naboru podatkov velja $\operatorname{dim} \geq \lceil B(n, d) \rceil$, torej ali morda kje obstaja kakšen protiprimer.
+    \item \textbf{Karakterizacija enakosti:} Domneva trdi, da je meja dosežena (enakost $\operatorname{dim} = \lceil B(n, d) \rceil$) natanko tedaj, ko sta izpolnjena naslednja pogoja deljivosti:
+    \begin{itemize}
+        \item za $d \not\equiv 0 \pmod 3$: enakost velja $\iff (d+1) \mid n$,
+        \item za $d \equiv 0 \pmod 3$: enakost velja $\iff (2d-1) \mid n$.
+    \end{itemize}
+    Preverile bomo obe smeri ekvivalence: ali enakost res nastopi vedno, ko je pogoj deljivosti izpolnjen, in ali 
+    vedno odpove, ko pogoj ni izpolnjen.
+    \item \textbf{Analiza odstopanja:} Za primere, ko enakost ne velja, bomo spremljale razliko med dejansko dimenzijo 
+    in spodnjo mejo ($\operatorname{dim} - \lceil B(n, d) \rceil$).
+\end{itemize}
+
+\subsection{Naloga 4: Iskanje eksaktnih formul za $d \geq 6$}
+
+Zadnji cilj projekta je na podlagi zbranih empiričnih podatkov poskusiti uganiti zaprte eksaktne formule za metrično 
+dimenzijo pri posameznih fiksnih vrednostih $d = 6, 7, 8, \dots$, podobno kot sta v literaturi že znani formuli za 
+$d = 4$ in $d = 5$.
+
+\paragraph{Postopek analize in iskanja vzorcev:}
+Ker se vedenje grafov tesno navezuje na pogoje enakosti iz Domneve~1, bomo podatke za vsak fiksni $d$ razdelile v 
+ostankarske razrede glede na ustrezen modul:
+\begin{itemize}
+    \item po modulu $d + 1$, kadar velja $d \not\equiv 0 \pmod 3$,
+    \item po modulu $2d - 1$, kadar velja $d \equiv 0 \pmod 3$.
+\end{itemize}
+Če zapišemo $n = q \cdot M + r$ (kjer je $M$ ustrezen modul, $r \in \{0, 1, \dots, M-1\}$ ostanek, $q$ pa celi del 
+količnika), bomo za vsak ostanek $r$ posebej opazovale, kako se dimenzija spreminja z naraščanjem $q$. Iskale bomo 
+stabilne linearne vzorce oblike:
+\[
+\operatorname{dim} = a \cdot q + c_r
+\]
+oziroma ekvivalentne zapise s funkcijama stropa $\lceil \cdot \rceil$ in dna $\lfloor \cdot \rfloor$.
+
+\paragraph{Določitev začetne meje veljavnosti:}
+Pri cirkulantnih grafih se pri majhnih $n$ pogosto pojavijo začetna odstopanja, preden se vzorec ustali. Zato bomo za 
+vsako predlagano formulo določile:
+\begin{itemize}
+    \item prag $N_d$ (najmanjši $n$), od katerega naprej predlagana formula velja za vse testirane primere brez izjeme,
+    \item natančen seznam vseh odstopanj (anomalij) pod to mejo ($n < N_d$).
+\end{itemize}
+
+Vse tako dobljene formule bomo v končnem poročilu predstavile s tabelami in grafi ter jih jasno označile kot empirično 
+podprte domneve.
+\end{document}
