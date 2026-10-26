@@ -22,6 +22,39 @@
 \begin{document}
 \maketitle
 
+\section{Osnovne definicje}
+V vseh nadaljnih definicijah predpostavimo, da imamo usmerjen graf
+$G = (V, E)$, kjer je $V$ množica vseh vozlišč in $E$ množica vseh usmerjenih povezav. 
+\begin{definicija}
+    Naj bodo $1 \leq a_1 < a_2 \ldots < a_k \leq n-1$ generatorji.
+    Usmerjeni cirkulantni graf $C_n(a_1, \ldots, a_{k})$ ima vozlišča
+    $v_0, v_1, \ldots, v_{n-1}$ in usmerjene povezave $v_iv_{i+a_j}$ za  
+    $0 \leq i \leq n-1$ in $1 \leq j \leq k$, pri čemer indekse računamo
+    po modulu n. V našem projektu smo obravnavale usmerjene cirkulantne grafe 
+    $C_n(1,2,\ldots,n-d)$, kjer je $n$ število vozlišč in $n-d$ število generatorjev.
+\end{definicija}
+
+\begin{definicija}
+    Naj bo $W = \{w_1, \ldots, w_z\} \subseteq V$ množica vozlišč.
+    Za vsako vozlišče $v \in V$ definiramo vektor razdalj glede na
+    množico $W$ kot:
+    $$
+    r(W|v) = (d(w_1, v), \ldots, d(w_z, v)),
+    $$
+    kjer $d(w_i, v)$ označuje najkrajšo dolžino usmerjen poti med
+    vozliščem $w_i$ in vozliščem $v$. Množiva $W$ je \textbf{razločevalna množica},
+    če za vsaki različni vozlišči $u, v \in V$ velja:
+    $$
+    r(W|u) \neq r(W|v)
+    $$
+\end{definicija}
+
+\begin{definicija}
+    \textbf{Metrična dimenzija} grafa $G$ je moč najmanjše razločevalne
+    množice. Označimo jo z $dim(G)$
+\end{definicija}
+
+
 \section{Načrt dela}
 \subsection{Naloga 1: Implementacija ILP modela in testiranje na znanih vrednostih}
 
