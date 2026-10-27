@@ -18,7 +18,6 @@
 \begin{document}
 \maketitle
 
-
 \section{Uvod in definicije}
 Pri izvedbi našega projekta si bomo pomagale z definicijami, predstavljenimi
 v nadaljevanju. V vseh bomo predpostavile, da imamo usmerjen graf
@@ -52,51 +51,42 @@ $G = (V, E)$, kjer je $V$ množica vseh vozlišč in $E$ množica vseh usmerjeni
     množice. Označimo jo z $dim(G)$
 \end{definicija}
 
-
 \section{Načrt reševanja problema}
 
-\subsection{Naloga 1: Implementacija ILP modela in verifikacija}
-Za natančen izračun $\operatorname{dim}(C_n(1, \dots, n-d))$ bomo implementirale celoštevilski linearni program. Za 
-osnovo bomo vzele ILP model, ki sta ga v svoji projektni nalogi uporabili že Jasmina Mazej in Lana Stojčić (avtorica 
-kode za omenjen ILP je Maša Popovič) ter ga prilagodile našemu problemu.
-Ker je $n > 2d$, so možne usmerjene razdalje le $0, 1$ ali $2$, pri čemer je 
-$d(v_i, v_j) = 1$, če $(j - i) \bmod n \in \{1, \dots, n-d\}$, in $2$ sicer. 
+Projekt bomo izvedle v štirih fazah:
 
-Problem formuliramo kot problem pokritja: z binarnimi spremenljivkami $x_w \in \{0, 1\}$ za vsako vozlišče $w$ 
-minimiziramo $\sum x_w$, pri pogojih $\sum_{w \in D_{u,v}} x_w \geq 1$ za vse pare $u < v$, kjer je 
-$D_{u,v} = \{w \mid d(w, u) \neq d(w, v)\}$. Pravilnost programa bomo preverile z znanima formulama za 
-$d = 4$ ($\lceil 2n/5 \rceil$) in $d = 5$, v kodo pa bomo vgradile tudi samodejno preverjanje unikatnosti dobljenih 
-vektorjev razdalj.
+\subsection{Naloga 1: Implementacija in verifikacija ILP modela}
+Iskanje minimalne razrešujoče množice bomo formulirale kot problem celoštevilskega linearnega programiranja (ILP) 
+in pri tem prilagodile obstoječo kodo Maše Popovič. Ker je $n > 2d$, sta možni razdalji med različnimi vozlišči le 
+$1$ ali $2$. Z binarnimi spremenljivkami $x_w \in \{0, 1\}$ za vsako vozlišče minimiziramo $\sum_{w \in V} x_w$ pri 
+pogojih pokritja
+\[
+\sum_{w \in D_{u,v}} x_w \geq 1 \quad \text{za vse } u \neq v,
+\]
+kjer je $D_{u,v} = \{w \in V \mid d(w, u) \neq d(w, v)\}$. Pravilnost kode bomo potrdile z znanima formulama za 
+$d = 4$ in $d = 5$ ter s preverjanjem unikatnosti dobljenih vektorjev razdalj.
 
-\subsection{Naloga 2: Računanje za večje grafe in pospešitev reševalnika}
-Z modelom bomo izvedle eksperimente za parametre $4 \leq d \leq 15$ in $n > 2d$. Za $5 \leq d \leq 10$ bomo vrednosti 
-izračunale vsaj do $n = 100$, za ostale pa čim dlje prek $n = 40$. 
-
-Zaradi upočasnitve reševalnika pri večjih $n$ bomo rotacijsko simetrijo odpravile s fiksiranjem začetnega vozlišča 
-($x_0 = 1$). Če obstaja kakšna optimalna razrešujoča množica, jo lahko namreč z rotacijo vedno preslikamo tako, da 
-vsebuje vozlišče $v_0$. Rezultate z vsemi metrikami in časi izvajanja bomo sproti shranjevale v datoteke CSV.
+\subsection{Naloga 2: Računanje za večje grafe in odprava simetrij}
+Izvedle bomo sistematične izračune za $4 \leq d \leq 15$ in $n > 2d$, pri čemer bomo za $5 \leq d \leq 10$ vrednosti 
+$n$ potisnile vsaj do $100$. Ker reševalniki pri večjih $n$ postanejo počasni, bomo rotacijsko simetrijo cirkulantnega 
+grafa odpravile s fiksiranjem začetnega vozlišča ($x_0 = 1$), po potrebi pa preizkusile zmogljivejši zunanji ILP 
+reševalnik. Vse dimenzije in čase izvajanja bomo sproti beležile v datoteke CSV.
 
 \subsection{Naloga 3: Testiranje Domneve 1}
-Na zbranih podatkih bomo preverile Domnevo 1, ki postavlja spodnjo mejo:
+Na pridobljenih rezultatih bomo preverile veljavnost Domneve 1, ki postavlja spodnjo mejo:
 \[
-\operatorname{dim}(C_n(1, \dots, n-d)) \geq B(n, d) = 
+\dim(C_n(1, \dots, n-d)) \geq B(n, d) = 
 \begin{cases}
-\left\lceil \frac{n}{d+1} \right\rceil \left\lceil \frac{d+1}{3} \right\rceil, & d \not\equiv 0 \pmod 3, \\
-\frac{n}{2d-1} \cdot \frac{2d}{3}, & d \equiv 0 \pmod 3,
+\left\lceil \frac{n}{d+1} \right\rceil \left\lceil \frac{d+1}{3} \right\rceil, & d \not\equiv 0 \pmod 3, \\[2mm]
+\left\lceil \frac{n}{2d-1} \cdot \frac{2d}{3} \right\rceil, & d \equiv 0 \pmod 3.
 \end{cases}
 \]
-zaokroženo navzgor na celo število. Sistematično bomo preverile:
-\begin{itemize}
-    \setlength\itemsep{0em}
-    \item ali spodnja meja velja za vse testirane primere (iskanje morebitnih protiprimerov),
-    \item pogoja enakosti: $(d+1) \mid n$ za $d \not\equiv 0 \pmod 3$ ter $(2d-1) \mid n$ za $d \equiv 0 \pmod 3$,
-    \item razlike $\operatorname{dim} - \lceil B(n, d) \rceil$ v primerih, ko enakost ne velja.
-\end{itemize}
+Preučile bomo robne primere in pogoje enakosti (zlasti $(d+1) \mid n$ oz. $(2d-1) \mid n$) ter analizirale morebitna 
+odstopanja od spodnje meje.
 
 \subsection{Naloga 4: Iskanje eksaktnih formul za $d \geq 6$}
-Za fiksne $d \geq 6$ bomo poskusile izpeljati zaprte formule glede na ostanke 
-$n \bmod (d+1)$ (pri $d \not\equiv 0 \pmod 3$) oziroma $n \bmod (2d-1)$ (pri $d \equiv 0 \pmod 3$). 
-Za vsak ostanek bomo poiskale obliko $\operatorname{dim} = a \cdot q + c_r$. Določile bomo tudi prag $N_d$, pri katerem 
-se vzorec ustali, in popisale vsa začetna odstopanja za $n < N_d$.
+Za fiksne parametre $d \geq 6$ bomo poskusile izpeljati zaprte formule glede na ostanke $n \bmod (d+1)$ oziroma 
+$n \bmod (2d-1)$. Določile bomo prag $N_d$, pri katerem se periodični vzorec ustali, in popisale vsa začetna odstopanja 
+za majhne $n$.
 
 \end{document}
