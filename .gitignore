@@ -1,6 +1,7 @@
 # Editor settings
 .vscode/
 .idea/
+.venv/
 
 # Operating-system files
 .DS_Store
