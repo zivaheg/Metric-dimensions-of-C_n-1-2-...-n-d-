@@ -1,0 +1,4 @@
+timestamp,n,d,dimension,resolving_set,status,certificate_ok,runtime_seconds,build_seconds,solve_seconds,solver,timeout_seconds,symmetry_break,error
+2026-10-31T17:12:58+00:00,9,4,4,"[0, 1, 2, 4]",optimal,True,0.20694,0.096468,0.10659,HiGHS,30.0,True,
+2026-10-31T17:12:58+00:00,10,4,4,"[0, 3, 5, 8]",optimal,True,0.047439,0.012148,0.034439,HiGHS,30.0,True,
+2026-10-31T17:12:58+00:00,11,4,5,"[0, 2, 3, 6, 8]",optimal,True,0.052463,0.020659,0.031502,HiGHS,30.0,True,
