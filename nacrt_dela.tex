@@ -39,7 +39,7 @@ $G = (V, E)$, kjer je $V$ množica vseh vozlišč in $E$ množica vseh usmerjeni
     r(W|v) = (d(w_1, v), \ldots, d(w_z, v)),
     $$
     kjer $d(w_i, v)$ označuje najkrajšo dolžino usmerjen poti med
-    vozliščem $w_i$ in vozliščem $v$. Množiva $W$ je \textbf{razrešujoča množica},
+    vozliščem $w_i$ in vozliščem $v$. Množica $W$ je \textbf{razrešujoča množica},
     če za vsaki različni vozlišči $u, v \in V$ velja:
     $$
     r(W|u) \neq r(W|v)
@@ -56,10 +56,10 @@ $G = (V, E)$, kjer je $V$ množica vseh vozlišč in $E$ množica vseh usmerjeni
 Projekt bomo izvedle v štirih fazah:
 
 \subsection{Naloga 1: Implementacija in verifikacija ILP modela}
-Iskanje minimalne razrešujoče množice bomo formulirale kot problem celoštevilskega linearnega programiranja (ILP) 
-in pri tem prilagodile obstoječo kodo Maše Popovič. Ker je $n > 2d$, sta možni razdalji med različnimi vozlišči le 
-$1$ ali $2$. Z binarnimi spremenljivkami $x_w \in \{0, 1\}$ za vsako vozlišče minimiziramo $\sum_{w \in V} x_w$ pri 
-pogojih pokritja
+Iskanje minimalne razrešujoče množice bomo formulirale kot problem ce\-lo\-šte\-vil\-ske\-ga linearnega 
+programiranja (ILP) in pri tem prilagodile obstoječo kodo Maše Popovič. Ker je $n > 2d$, sta možni razdalji med 
+različnimi vozlišči le $1$ ali $2$. Z binarnimi spremenljivkami $x_w \in \{0, 1\}$ za vsako vozlišče minimiziramo 
+$\sum_{w \in V} x_w$ pri pogojih pokritja
 \[
 \sum_{w \in D_{u,v}} x_w \geq 1 \quad \text{za vse } u \neq v,
 \]
@@ -75,10 +75,10 @@ reševalnik. Vse dimenzije in čase izvajanja bomo sproti beležile v datoteke C
 \subsection{Naloga 3: Testiranje Domneve 1}
 Na pridobljenih rezultatih bomo preverile veljavnost Domneve 1, ki postavlja spodnjo mejo:
 \[
-\dim(C_n(1, \dots, n-d)) \geq B(n, d) = 
+\dim(C_n(1, \dots, n-d)) \geq 
 \begin{cases}
-\left\lceil \frac{n}{d+1} \right\rceil \left\lceil \frac{d+1}{3} \right\rceil, & d \not\equiv 0 \pmod 3, \\[2mm]
-\left\lceil \frac{n}{2d-1} \cdot \frac{2d}{3} \right\rceil, & d \equiv 0 \pmod 3.
+\left\lfloor \frac{n}{d+1} \right\rfloor \left\lceil \frac{d+1}{3} \right\rceil; & d \not\equiv 0 \pmod 3 \\[2mm]
+\frac{n}{2d-1} \cdot \frac{2d}{3}; & d \equiv 0 \pmod 3.
 \end{cases}
 \]
 Preučile bomo robne primere in pogoje enakosti (zlasti $(d+1) \mid n$ oz. $(2d-1) \mid n$) ter analizirale morebitna 
@@ -86,7 +86,7 @@ odstopanja od spodnje meje.
 
 \subsection{Naloga 4: Iskanje eksaktnih formul za $d \geq 6$}
 Za fiksne parametre $d \geq 6$ bomo poskusile izpeljati zaprte formule glede na ostanke $n \bmod (d+1)$ oziroma 
-$n \bmod (2d-1)$. Določile bomo prag $N_d$, pri katerem se periodični vzorec ustali, in popisale vsa začetna odstopanja 
-za majhne $n$.
+$n \bmod (2d-1)$. Opazovale bomo, če se pojavijo kakšni vzorci in s tem poizkusile določiti prag $N_d$, pri katerem
+se periodični vzorec ustali.
 
 \end{document}
