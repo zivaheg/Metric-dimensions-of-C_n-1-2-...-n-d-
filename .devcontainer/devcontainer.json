@@ -1,0 +1,20 @@
+{
+  "name": "Metric dimensions — SageMath 10.10",
+  "image": "sagemath/sagemath:latest",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/sage/project,type=bind",
+  "workspaceFolder": "/home/sage/project",
+  "containerUser": "sage",
+  "remoteUser": "sage",
+  "updateRemoteUserUID": false,
+  "overrideCommand": true,
+  "runArgs": ["--init"],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter"
+      ]
+    }
+  }
+}
+

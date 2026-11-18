@@ -1,0 +1,18 @@
+name: metric-dimensions
+
+services:
+  sage:
+    image: sagemath/sagemath:latest
+    pull_policy: missing
+    working_dir: /home/sage/project
+    command: ["sage-jupyter"]
+    init: true
+    stdin_open: true
+    tty: true
+    ports:
+      - "127.0.0.1:${SAGE_JUPYTER_PORT:-8888}:8888"
+    volumes:
+      - type: bind
+        source: .
+        target: /home/sage/project
+
